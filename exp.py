@@ -2,13 +2,26 @@ import pandas as pd
 import numpy as np
 import sys
 
-# process mandatory command line option:
-# $0 [CAPE|CDATE] 
-if len(sys.argv) < 2:
+def usage():
   print("Error: mandatory command line choice:")
   print("  CAPE - if you want the CAPE number")
+  print("  EARNINGS - Cyclically Adjusted Earnings")
   print("  CDATE - date of that CAPE number, to make sure it's fresh")
   exit(1)
+
+# process mandatory command line option:
+# $0 [CAPE|CDATE] 
+if len(sys.argv) != 2:
+  usage()
+
+switcher = {
+  "CAPE": "CAPE",
+  "EARNINGS": "EARNINGS",
+  "CDATE": "CDATE"
+}
+# quick check to make sure we have something we recognize
+persona = switcher.get(sys.argv[1], "NOPE")
+if (persona == "NOPE"): usage()
 
 # Read Excel file
 data_shiller = pd.read_excel("ie_data.xls", sheet_name="Data", header=None)
@@ -42,31 +55,18 @@ month = data_shiller['Date'].str.slice(5, 7)
 date = year + "-" + month + "-01"
 data_shiller['Date'] = pd.to_datetime(date, errors='coerce')
 
-#data_shiller['Date', 'S&P Comp', 'Dividend', 'Earnings', 
-#  'Consumer Price CPI', 'Real price', 'Real Dividend', 
-#  'Real Total Return Price', 'Real Earnings', 
-#  'CAPE', '10 Years Annualized Stock Real Return', 
-#  ].head()
-
-# how to turn that type into e.g. JSON?  Or break it apart and return single
-# >>> C= data_shiller[len(data_shiller)-1:]['CAPE']
-# >>> C
-# 1839    34.413463
-# Name: CAPE, dtype: object
-# 
-## type conversion, then extraction
-# >>> C.to_numpy()[0]
-# 34.41346281338742
-
-# CAPE
 C = data_shiller[len(data_shiller)-1:]['CAPE']
-print( C.to_numpy()[0] )
-# Cyclically Adjusted Earnings
-print (1 / C.to_numpy()[0])
+if (persona == "CAPE"):
+  print( C.to_numpy()[0] )
 
-# DATE OF CAPE
-C = data_shiller[len(data_shiller)-1:]['Date']
-TD = C.to_numpy()[0] 
-TD = pd.to_datetime(TD)		# stinky conversion
-print( TD.strftime("%Y-%m-%d") )
+if (persona == "EARNINGS"):
+  # Cyclically Adjusted Earnings
+  print (1 / C.to_numpy()[0])
 
+if (persona == "CDATE"):
+  # DATE OF CAPE
+  C = data_shiller[len(data_shiller)-1:]['Date']
+  TD = C.to_numpy()[0] 
+  TD = pd.to_datetime(TD)		# stinky conversion
+  print( TD.strftime("%Y-%m-%d") )
+  
