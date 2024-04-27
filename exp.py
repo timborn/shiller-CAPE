@@ -49,5 +49,15 @@ data_shiller['Date'] = pd.to_datetime(date, errors='coerce')
 # >>> C.to_numpy()[0]
 # 34.41346281338742
 
+# CAPE
 C = data_shiller[len(data_shiller)-1:]['CAPE']
 print( C.to_numpy()[0] )
+# Cyclically Adjusted Earnings
+print (1 / C.to_numpy()[0])
+
+# DATE OF CAPE
+C = data_shiller[len(data_shiller)-1:]['Date']
+TD = C.to_numpy()[0] 
+TD = pd.to_datetime(TD)		# stinky conversion
+print( TD.strftime("%Y-%m-%d") )
+
