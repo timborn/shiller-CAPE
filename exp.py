@@ -1,5 +1,14 @@
 import pandas as pd
 import numpy as np
+import sys
+
+# process mandatory command line option:
+# $0 [CAPE|CDATE] 
+if len(sys.argv) < 2:
+  print("Error: mandatory command line choice:")
+  print("  CAPE - if you want the CAPE number")
+  print("  CDATE - date of that CAPE number, to make sure it's fresh")
+  exit(1)
 
 # Read Excel file
 data_shiller = pd.read_excel("ie_data.xls", sheet_name="Data", header=None)
