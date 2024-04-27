@@ -2,14 +2,15 @@ import pandas as pd
 import numpy as np
 
 # Read Excel file
-data_schiller = pd.read_excel("ie_data.xls", sheet_name="Data", header=None)
+data_shiller = pd.read_excel("ie_data.xls", sheet_name="Data", header=None)
 
-# Drop the first 7 rows and certain columns
-data_schiller = data_schiller.drop(data_schiller.index[0:7]).reset_index(drop=True)
-data_schiller = data_schiller.drop(columns=[1, 14, 16])
+# Drop the first 8 rows and certain columns
+data_shiller = data_shiller.drop(data_shiller.index[0:8]).reset_index(drop=True)
+# data_shiller = data_shiller.drop(columns=[1, 14, 16])
+data_shiller = data_shiller.drop(columns=[13, 15])
 
 # Set column names
-data_schiller.columns = ['Date', 'S&P Comp', 'Dividend', 'Earnings', 'Consumer Price CPI', 
+data_shiller.columns = ['Date', 'S&P Comp', 'Dividend', 'Earnings', 'Consumer Price CPI', 
                              'Date Fraction', 'Long Interest Rate', 'Real price', 'Real Dividend', 
                              'Real Total Return Price', 'Real Earnings','Real TR Scaled Earnings', 
                              'CAPE', 'TR CAPE', 'Excess CAPE Yield', 'Monthly Total Bond Returns', 
@@ -18,21 +19,35 @@ data_schiller.columns = ['Date', 'S&P Comp', 'Dividend', 'Earnings', 'Consumer P
                           ]
 # Convert columns 2 to 20 to numeric and the Date column to string
 
-data_schiller.iloc[:, 1:20] = data_schiller.iloc[:, 1:20].apply(pd.to_numeric, errors='coerce')
-data_schiller['Date'] = data_schiller['Date'].astype(str)
-
-# Extract year and quarter from the Date, then form a new Date format
-year = data_schiller['Date'].str.slice(0, 4)
-quarter = data_schiller['Date'].str.slice(5, 7)
-date = year + "-" + quarter + "-01"
-data_schiller['Date'] = pd.to_datetime(date, errors='coerce')
+data_shiller.iloc[:, 1:20] = data_shiller.iloc[:, 1:20].apply(pd.to_numeric, errors='coerce')
+data_shiller['Date'] = data_shiller['Date'].astype(str)
 
 # Drop rows where Date is NA
-data_schiller = data_schiller.dropna(subset=['Date'])
+data_shiller = data_shiller.dropna(subset=['Date'])
+# there is also a 'nan' in there, which appears different from NaN
+data_shiller = data_shiller[data_shiller['Date'] != 'nan']
 
-data_schiller['Date', 'S&P Comp', 'Dividend', 'Earnings', 'Consumer Price CPI', 
-                             'Real price', 'Real Dividend', 
-                             'Real Total Return Price', 'Real Earnings', 
-                             'CAPE', '10 Years Annualized Stock Real Return', 
-                             
-                          ].head()
+# Extract year and month from the Date, then form a new Date format
+year = data_shiller['Date'].str.slice(0, 4)
+month = data_shiller['Date'].str.slice(5, 7)
+date = year + "-" + month + "-01"
+data_shiller['Date'] = pd.to_datetime(date, errors='coerce')
+
+#data_shiller['Date', 'S&P Comp', 'Dividend', 'Earnings', 
+#  'Consumer Price CPI', 'Real price', 'Real Dividend', 
+#  'Real Total Return Price', 'Real Earnings', 
+#  'CAPE', '10 Years Annualized Stock Real Return', 
+#  ].head()
+
+# how to turn that type into e.g. JSON?  Or break it apart and return single
+# >>> C= data_shiller[len(data_shiller)-1:]['CAPE']
+# >>> C
+# 1839    34.413463
+# Name: CAPE, dtype: object
+# 
+## type conversion, then extraction
+# >>> C.to_numpy()[0]
+# 34.41346281338742
+
+C = data_shiller[len(data_shiller)-1:]['CAPE']
+print( C.to_numpy()[0] )
