@@ -25,6 +25,12 @@ NB this also includes some basic analysis:
 compared to 2.94% last month and 3.48% last year. This is lower
 than the long term average of 6.81%."
 
+Combine this with the 10 year TIPS yield to get Excess Cape Yield.
+This is the difference between inflation-adjusted Treasury yields
+and the cyclically adjusted earnings yield.  Supposedly Shiller prefers
+this to CAPE these days.  And it seems to be a metric in The Missing
+Billionaires.
+
 See Also
 ========
 "Can The CAPE Ratio Predict Stock Market Returns?", 
